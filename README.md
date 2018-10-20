@@ -1,26 +1,22 @@
 # mstdn-ebooks
+
 **Lynnear Edition**
 
-This version makes quite a few changes from [the original](https://github.com/Jess3Jane/mastodon-ebooks), such as:
+This version makes quite a few changes from [the original](https://github.com/Jess3Jane/mastodon-ebooks) and [the other original](https://github.com/Lynnesbian/mstdn-ebooks/tree/3d059d0b9b66fd31378574104f1a56f2be5a319c), such as:
+
 - Unicode support
 - Non-Markov stuff
-- Stores toots in a sqlite database rather than a text file
-  - Doesn't unecessarily redownload all toots every time
-  
-## Install/usage guide
-An installation and usage guide is available for unix-based platforms (linux, macOS...) [here](https://cloud.lynnesbian.space/s/Qxxm2sYdMZaqWat).
+- Doesn't unecessarily redownload all toots every time
+- Uses an API called "webfinger" to allow downloading toots not known to your bot's instance
+- Self-contained executable handles scheduling
+- Docker support
+- Written in Go
 
-## Original README
-hey look it's an ebooks bot
+## Installation
 
-python3
-
-install the requirements with `sudo pip3 install -r requirements`
-
-make a bot (probably on bots in space) and follow the target accounts
-
-run `python3 main.py` to login and scrape
-
-run `python3 gen.py` to make a toot
-
-cron is an okay choice to make it toot regularly
+1. Build mstdn-ebooks the same way you would build any Go program (`go get`, etc.) Alternatively, if you don't want to build it yourself, download a [precompiled release version](https://github.com/Lynnesbian/mstdn-ebooks/releases/latest).
+2. If you haven't already, create an account on [botsin.space](https://botsin.space) or another instance.
+3. Make sure the bot account is ONLY following you. Remove any default follows.
+4. Run the `mstdn-ebooks` command. If your instance is not botsin.space, run the command as `mstdn-ebooks -server https://[your instance]`.
+5. Copy the URL it generates into a browser logged into your bot account, and copy the code that Mastodon generates back to the program.
+6. Congratulations! Your ebooks bot is now running. To restart it, you only need to redo step 4.
