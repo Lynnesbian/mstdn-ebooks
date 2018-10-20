@@ -88,8 +88,7 @@ func main() {
 			case *mastodon.DeleteEvent:
 				// Ignore (for now)
 			case *mastodon.NotificationEvent:
-				if e.Notification.Type != "mention" {
-					log.Printf("Ignoring notification of type %q", e.Notification.Type)
+				if e.Notification.Type != "mention" || e.Notification.Account.Bot {
 					continue
 				}
 				_, err := client.PostStatus(ctx, genToot(ctx, me, e.Notification.Status))
