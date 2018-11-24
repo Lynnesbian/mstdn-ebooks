@@ -4,7 +4,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import mastodon
-import os, random, re, json
+import os, random, re, json, traceback
 import create
 from bs4 import BeautifulSoup
 
@@ -49,8 +49,12 @@ class ReplyListener(mastodon.StreamListener):
 			visibility = notification['status']['visibility']
 			if visibility == "public":
 				visibility = "unlisted"
-			client.status_post(toot, post_id, visibility=visibility)
-			print("replied with " + toot)
+			try:
+				client.status_post(toot, post_id, visibility=visibility)
+			except Exception:
+				traceback.print_exc()
+			else:
+				print("replied with " + toot)
 
 rl = ReplyListener()
 client.stream_user(rl)
