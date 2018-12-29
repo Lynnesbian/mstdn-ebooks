@@ -183,14 +183,14 @@ for f in following:
 				
 				# its a toost baby
 				content = oi['object']['content']
-				if oi['object']['summary'] != None:
+				if oi['object']['summary'] != None and oi['object']['summary'] != "":
 					#don't download CW'd toots
 					continue
 				toot = extract_toot(content)
 				# print(toot)
 				try:
 					if pleroma:
-						if c.execute("SELECT COUNT(*) FROM toots WHERE id LIKE ?", (oi['object']['id'],)).fetchone()[0] > 0:
+						if c.execute("SELECT COUNT(*) FROM toots WHERE uri LIKE ?", (oi['object']['id'],)).fetchone()[0] > 0:
 							#we've caught up to the notices we've already downloaded, so we can stop now
 							done = True
 							break
