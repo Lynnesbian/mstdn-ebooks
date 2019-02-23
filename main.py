@@ -31,15 +31,15 @@ if 'instance_blacklist' not in cfg:
 
 #if the user is using a (very!) old version that still uses the .secret files, migrate to the new method
 if os.path.exists("clientcred.secret"):
-		print("Upgrading to new storage method")
-		cc = open("clientcred.secret").read().split("\n")
-		cfg['client'] = {
-				"id": cc[0],
-				"secret": cc[1]
-		}
-		cfg['secret'] = open("usercred.secret").read().rstrip("\n")
-		os.remove("clientcred.secret")
-		os.remove("usercred.secret")
+	print("Upgrading to new storage method")
+	cc = open("clientcred.secret").read().split("\n")
+	cfg['client'] = {
+			"id": cc[0],
+			"secret": cc[1]
+	}
+	cfg['secret'] = open("usercred.secret").read().rstrip("\n")
+	os.remove("clientcred.secret")
+	os.remove("usercred.secret")
 		
 
 if "client" not in cfg:
@@ -92,6 +92,13 @@ def handleCtrlC(signal, frame):
 
 signal.signal(signal.SIGINT, handleCtrlC)
 
+patterns = {
+	"handle": re.compile(r"^.*@(.+)"),
+	"url": re.compile(r"https?:\/\/(.*)"),
+	"uri": re.compile(r'template="([^"]+)"'),
+	"pid": re.compile(r"[^\/]+$"),
+}
+
 for f in following:
 	last_toot = c.execute("SELECT id FROM `toots` WHERE userid LIKE ? ORDER BY id DESC LIMIT 1", (f.id,)).fetchone()
 	if last_toot != None:
@@ -102,9 +109,9 @@ for f in following:
 
 	#find the user's activitypub outbox
 	print("WebFingering... (do not laugh at this. WebFinger is a federated protocol. https://wikipedia.org/wiki/WebFinger)")
-	instance = re.search(r"^.*@(.+)", f.acct)
+	instance = patterns["handle"].search(f.acct)
 	if instance == None:
-		instance = re.search(r"https?:\/\/(.*)", cfg['site']).group(1)
+		instance = patterns["url"].search(cfg['site']).group(1)
 	else:
 		instance = instance.group(1)
 
@@ -114,7 +121,7 @@ for f in following:
 
 	try:
 		r = requests.get("https://{}/.well-known/host-meta".format(instance), timeout=10)
-		uri = re.search(r'template="([^"]+)"', r.text).group(1)
+		uri = patterns["uri"].search(r.text).group(1)
 		uri = uri.format(uri = "{}@{}".format(f.username, instance))
 		r = requests.get(uri, headers={"Accept": "application/json"}, timeout=10)
 		j = r.json()
@@ -162,7 +169,7 @@ for f in following:
 							#you might be wondering, "lynne, what if the instance ratelimits you after 40 posts, and they've made 60 since main.py was last run? wouldn't the bot miss 20 posts and never be able to see them?" to which i reply, "it's called mstdn-ebooks not fediverse-ebooks. pleroma support is an afterthought"
 							done = True
 							break
-					pid = re.search(r"[^\/]+$", oi['object']['id']).group(0)
+					pid = patterns["pid"].search(oi['object']['id']).group(0)
 					c.execute("REPLACE INTO toots (id, userid, uri, content) VALUES (?, ?, ?, ?)", (
 						pid,
 						f.id,
