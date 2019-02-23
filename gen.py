@@ -36,4 +36,7 @@ if __name__ == '__main__':
 			"toot": "An unknown error that should never happen occurred. Maybe it's because of the spoiler text, which is {}. If not, I have no idea what went wrong. This is an error message -- contact lynnesbian@fedi.lynnesbian.space for assistance.".format(cfg['cw'])
 			}
 			client.status_post(toot['toot'], visibility = 'unlisted', spoiler_text = "Error!")
-	print(toot['toot'])
+	try:
+		print(toot['toot'])
+	except UnicodeEncodeError:
+		print(toot['toot'].encode("ascii", "ignore")) # encode as ASCII, dropping any non-ASCII characters
