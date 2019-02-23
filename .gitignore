@@ -7,3 +7,6 @@ toots.db
 toots.db-journal
 toots.db-wal
 __pycache__/*
+.vscode/
+.editorconfig
+.*.swp
