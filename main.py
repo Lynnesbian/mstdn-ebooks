@@ -157,14 +157,14 @@ for f in following:
 				
 				# its a toost baby
 				content = oi['object']['content']
-				if oi['object']['summary'] != None:
+				if oi['object']['summary'] != None and oi['object']['summary'] != "":
 					#don't download CW'd toots. if you want your bot to download and learn from CW'd toots, replace "continue" with "pass". (todo: add a config.json option for this)
 					continue
 				toot = extract_toot(content)
 				# print(toot)
 				try:
 					if pleroma:
-						if c.execute("SELECT COUNT(*) FROM toots WHERE id LIKE ?", (oi['object']['id'],)).fetchone()[0] > 0:
+						if c.execute("SELECT COUNT(*) FROM toots WHERE uri LIKE ?", (oi['object']['id'],)).fetchone()[0] > 0:
 							#we've caught up to the notices we've already downloaded, so we can stop now
 							#you might be wondering, "lynne, what if the instance ratelimits you after 40 posts, and they've made 60 since main.py was last run? wouldn't the bot miss 20 posts and never be able to see them?" to which i reply, "it's called mstdn-ebooks not fediverse-ebooks. pleroma support is an afterthought"
 							done = True
