@@ -115,7 +115,7 @@ for f in following:
 	print("Harvesting toots for user @{}, starting from {}".format(f.acct, last_toot))
 
 	#find the user's activitypub outbox
-	print("WebFingering... (do not laugh at this. WebFinger is a federated protocol. https://wikipedia.org/wiki/WebFinger)")
+	print("WebFingering...")
 	instance = patterns["handle"].search(f.acct)
 	if instance == None:
 		instance = patterns["url"].search(cfg['site']).group(1)
