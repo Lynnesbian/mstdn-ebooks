@@ -172,7 +172,6 @@ for f in following:
 							#we've caught up to the notices we've already downloaded, so we can stop now
 							#you might be wondering, "lynne, what if the instance ratelimits you after 40 posts, and they've made 60 since main.py was last run? wouldn't the bot miss 20 posts and never be able to see them?" to which i reply, "it's called mstdn-ebooks not fediverse-ebooks. pleroma support is an afterthought"
 							done = True
-							break
 					pid = patterns["pid"].search(oi['object']['id']).group(0)
 					c.execute("REPLACE INTO toots (id, cw, userid, uri, content) VALUES (?, ?, ?, ?)", (
 						pid,
