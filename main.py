@@ -43,7 +43,7 @@ if os.path.exists("clientcred.secret"):
 	cfg['secret'] = open("usercred.secret").read().rstrip("\n")
 	os.remove("clientcred.secret")
 	os.remove("usercred.secret")
-		
+
 
 if "client" not in cfg:
 	print("No application info -- registering application with {}".format(cfg['site']))
@@ -75,8 +75,8 @@ def extract_toot(toot):
 
 client = Mastodon(
 	client_id=cfg['client']['id'],
-	client_secret = cfg['client']['secret'], 
-	access_token=cfg['secret'], 
+	client_secret = cfg['client']['secret'],
+	access_token=cfg['secret'],
 	api_base_url=cfg['site'])
 
 me = client.account_verify_credentials()
@@ -105,6 +105,18 @@ patterns = {
 	"uri": re.compile(r'template="([^"]+)"'),
 	"pid": re.compile(r"[^\/]+$"),
 }
+
+
+def insert_toot(oii, acc, post, cursor):  # extracted to prevent duplication
+	pid = patterns["pid"].search(oii['object']['id']).group(0)
+	cursor.execute("REPLACE INTO toots (id, cw, userid, uri, content) VALUES (?, ?, ?, ?, ?)", (
+		pid,
+		1 if (oii['object']['summary'] != None and oii['object']['summary'] != "") else 0,
+		acc.id,
+		oii['object']['id'],
+		post
+	))
+
 
 for f in following:
 	last_toot = c.execute("SELECT id FROM `toots` WHERE userid LIKE ? ORDER BY id DESC LIMIT 1", (f.id,)).fetchone()
@@ -161,7 +173,7 @@ for f in following:
 			for oi in j['orderedItems']:
 				if oi['type'] != "Create":
 					continue #this isn't a toot/post/status/whatever, it's a boost or a follow or some other activitypub thing. ignore
-				
+
 				# its a toost baby
 				content = oi['object']['content']
 				toot = extract_toot(content)
@@ -172,15 +184,11 @@ for f in following:
 							#we've caught up to the notices we've already downloaded, so we can stop now
 							#you might be wondering, "lynne, what if the instance ratelimits you after 40 posts, and they've made 60 since main.py was last run? wouldn't the bot miss 20 posts and never be able to see them?" to which i reply, "it's called mstdn-ebooks not fediverse-ebooks. pleroma support is an afterthought"
 							done = True
-					pid = patterns["pid"].search(oi['object']['id']).group(0)
-					c.execute("REPLACE INTO toots (id, cw, userid, uri, content) VALUES (?, ?, ?, ?, ?)", (
-						pid,
-						1 if (oi['object']['summary'] != None and oi['object']['summary'] != "") else 0,
-						f.id,
-						oi['object']['id'],
-						toot
-						)
-					)
+					if cfg['lang']:
+						if oi['object']['contentMap'][cfg['lang']]:  # filter for language
+							insert_toot(oi, f, toot, c)
+					else:
+						insert_toot(oi, f, toot, c)
 					pass
 				except:
 					pass #ignore any toots that don't successfully go into the DB
