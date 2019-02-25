@@ -18,7 +18,8 @@ except:
 	shutil.copy2("config.sample.json", "config.json")
 	cfg = json.load(open('config.json', 'r'))
 
-#config.json *MUST* contain the instance URL, the instance blacklist (for dead/broken instances), and the CW text. if they're not provided, we'll fall back to defaults.
+#config.json should contain the instance URL, the instance blacklist (for dead/broken instances), and the CW text. if they're not provided, we'll fall back to defaults.
+# TODO: this is pretty messy
 if 'site' not in cfg:
 	cfg['website'] = "https://botsin.space"
 if 'cw' not in cfg:
@@ -28,6 +29,8 @@ if 'instance_blacklist' not in cfg:
 		"bofa.lol",
 		"witches.town"
 	]
+if 'learn_from_cw' not in cfg:
+	cfg['learn_from_cw'] = False
 
 #if the user is using a (very!) old version that still uses the .secret files, migrate to the new method
 if os.path.exists("clientcred.secret"):
@@ -82,7 +85,11 @@ following = client.account_following(me.id)
 db = sqlite3.connect("toots.db")
 db.text_factory=str
 c = db.cursor()
-c.execute("CREATE TABLE IF NOT EXISTS `toots` (id INT NOT NULL UNIQUE PRIMARY KEY, userid INT NOT NULL, uri VARCHAR NOT NULL, content VARCHAR NOT NULL) WITHOUT ROWID")
+c.execute("CREATE TABLE IF NOT EXISTS `toots` (id INT NOT NULL UNIQUE PRIMARY KEY, cw INT NOT NULL DEFAULT 0, userid INT NOT NULL, uri VARCHAR NOT NULL, content VARCHAR NOT NULL) WITHOUT ROWID")
+try:
+	c.execute("ALTER TABLE `toots` ADD COLUMN cw INT NOT NULL DEFAULT 0")
+except:
+	pass # column already exists
 db.commit()
 
 def handleCtrlC(signal, frame):
@@ -157,9 +164,6 @@ for f in following:
 				
 				# its a toost baby
 				content = oi['object']['content']
-				if oi['object']['summary'] != None and oi['object']['summary'] != "":
-					#don't download CW'd toots. if you want your bot to download and learn from CW'd toots, replace "continue" with "pass". (todo: add a config.json option for this)
-					continue
 				toot = extract_toot(content)
 				# print(toot)
 				try:
@@ -170,8 +174,9 @@ for f in following:
 							done = True
 							break
 					pid = patterns["pid"].search(oi['object']['id']).group(0)
-					c.execute("REPLACE INTO toots (id, userid, uri, content) VALUES (?, ?, ?, ?)", (
+					c.execute("REPLACE INTO toots (id, cw, userid, uri, content) VALUES (?, ?, ?, ?)", (
 						pid,
+						1 if (oi['object']['summary'] != None and oi['object']['summary'] != "") else 0,
 						f.id,
 						oi['object']['id'],
 						toot

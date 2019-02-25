@@ -7,6 +7,8 @@ import markovify
 from bs4 import BeautifulSoup
 import re, multiprocessing, sqlite3, shutil, os, json
 
+cfg = json.load(open('config.json'))
+
 def make_sentence(output):
 	class nlt_fixed(markovify.NewlineText): #modified version of NewlineText that never rejects sentences
 		def test_sentence_input(self, sentence):
@@ -16,7 +18,10 @@ def make_sentence(output):
 	db = sqlite3.connect("toots-copy.db")
 	db.text_factory=str
 	c = db.cursor()
-	toots = c.execute("SELECT content FROM `toots` ORDER BY RANDOM() LIMIT 10000").fetchall()
+	if cfg['learn_from_cw']:
+		toots = c.execute("SELECT content FROM `toots` ORDER BY RANDOM() LIMIT 10000").fetchall()
+	else: 
+		toots = c.execute("SELECT content FROM `toots` WHERE cw = 0 ORDER BY RANDOM() LIMIT 10000").fetchall()
 	toots_str = ""
 	for toot in toots:
 		toots_str += "\n{}".format(toot[0])
@@ -32,7 +37,6 @@ def make_sentence(output):
 		tries = tries + 1
 
 	sentence = re.sub("^(?:@\u202B[^ ]* )*", "", sentence) #remove leading pings (don't say "@bob blah blah" but still say "blah @bob blah")
-	sentence = re.sub("^(?:@\u200B[^ ]* )*", "", sentence)
 
 	output.send(sentence)
 
