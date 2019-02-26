@@ -16,11 +16,11 @@ def make_sentence(output):
 
 	shutil.copyfile("toots.db", "toots-copy.db") #create a copy of the database because reply.py will be using the main one
 	db = sqlite3.connect("toots-copy.db")
-	db.text_factory=str
+	db.text_factory = str
 	c = db.cursor()
 	if cfg['learn_from_cw']:
 		toots = c.execute("SELECT content FROM `toots` ORDER BY RANDOM() LIMIT 10000").fetchall()
-	else: 
+	else:
 		toots = c.execute("SELECT content FROM `toots` WHERE cw = 0 ORDER BY RANDOM() LIMIT 10000").fetchall()
 	toots_str = ""
 	for toot in toots:
