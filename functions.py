@@ -23,7 +23,7 @@ def make_sentence(output):
 	else:
 		toots = c.execute("SELECT content FROM `toots` WHERE cw = 0 ORDER BY RANDOM() LIMIT 10000").fetchall()
 	toots_str = ""
-	for toot in toots:
+	for toot in toots: # TODO: find a more efficient way to do this
 		toots_str += "\n{}".format(toot[0])
 	model = nlt_fixed(toots_str)
 	toots_str = None
@@ -36,7 +36,11 @@ def make_sentence(output):
 		sentence = model.make_short_sentence(500, tries=10000)
 		tries = tries + 1
 
-	sentence = re.sub("^(?:@\u202B[^ ]* )*", "", sentence) #remove leading pings (don't say "@bob blah blah" but still say "blah @bob blah")
+	# optionally remove mentions
+	if cfg['mention_handling'] == 1:
+		sentence = re.sub(r"^\S*@\u200B\S*\s?", "")
+	elif cfg['mention_handling'] == 0:
+		sentence = re.sub(r"\S*@\u200B\S*\s?", "")
 
 	output.send(sentence)
 

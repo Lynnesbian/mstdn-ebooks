@@ -2,5 +2,6 @@
     "lang": "en",
 	"site": "https://botsin.space",
 	"cw": null,
-	"learn_from_cw": false
+	"learn_from_cw": false,
+	"mention_handling": 1
 }
