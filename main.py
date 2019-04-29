@@ -12,25 +12,19 @@ import requests
 import functions
 
 scopes = ["read:statuses", "read:accounts", "read:follows", "write:statuses", "read:notifications"]
+#cfg defaults
+cfg = {
+	"site": "https://botsin.space",
+	"cw": None,
+	"instance_blacklist": ["bofa.lol", "witches.town"],
+	"learn_from_cw": False
+}
 try:
-	cfg = json.load(open('config.json', 'r'))
+	cfg.update(json.load(open('config.json', 'r')))
 except:
-	shutil.copy2("config.sample.json", "config.json")
-	cfg = json.load(open('config.json', 'r'))
 
-#config.json should contain the instance URL, the instance blacklist (for dead/broken instances), and the CW text. if they're not provided, we'll fall back to defaults.
-# TODO: this is pretty messy
-if 'site' not in cfg:
-	cfg['website'] = "https://botsin.space"
-if 'cw' not in cfg:
-	cfg['cw'] = None
-if 'instance_blacklist' not in cfg:
-	cfg["instance_blacklist"] = [
-		"bofa.lol",
-		"witches.town"
-	]
-if 'learn_from_cw' not in cfg:
-	cfg['learn_from_cw'] = False
+	shutil.copy2("config.sample.json", "config.json")
+	cfg.update(json.load(open('config.json', 'r')))
 
 #if the user is using a (very!) old version that still uses the .secret files, migrate to the new method
 if os.path.exists("clientcred.secret"):
