@@ -17,7 +17,8 @@ cfg = {
 	"site": "https://botsin.space",
 	"cw": None,
 	"instance_blacklist": ["bofa.lol", "witches.town"],
-	"learn_from_cw": False
+	"learn_from_cw": False,
+	"mention_handling": 1,
 }
 try:
 	cfg.update(json.load(open('config.json', 'r')))
