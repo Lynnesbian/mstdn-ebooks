@@ -38,9 +38,9 @@ def make_sentence(output):
 
 	# optionally remove mentions
 	if cfg['mention_handling'] == 1:
-		sentence = re.sub(r"^\S*@\u200B\S*\s?", "")
+		sentence = re.sub(r"^\S*@\u200B\S*\s?", "", sentence)
 	elif cfg['mention_handling'] == 0:
-		sentence = re.sub(r"\S*@\u200B\S*\s?", "")
+		sentence = re.sub(r"\S*@\u200B\S*\s?", "", sentence)
 
 	output.send(sentence)
 
