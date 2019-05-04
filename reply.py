@@ -44,7 +44,6 @@ class ReplyListener(mastodon.StreamListener):
 						print("didn't reply (max_thread_length exceeded)")
 						return
 
-				threads[post_id] = [time.time(), 0]
 			mention = extract_toot(notification['status']['content'])
 			toot = functions.make_toot(True)['toot'] #generate a toot
 			toot = acct + " " + toot #prepend the @
