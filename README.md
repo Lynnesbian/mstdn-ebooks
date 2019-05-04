@@ -21,6 +21,7 @@ Configuring mstdn-ebooks is accomplished by editing `config.json`.
 | instance_blacklist | ["bofa.lol", "witches.town"] | If your bot is following someone from a blacklisted instance, it will skip over them and not download their posts. This is useful for ensuring that mstdn-ebooks doesn't download posts from dead instances, without you having to unfollow the user(s) from them. |
 | learn_from_cw | false |  If true, mstdn-ebooks will learn from CW'd posts. |
 | mention_handling | 1 |  0: Never use mentions. 1: Only generate fake mentions in the middle of posts, never at the start. 2: Use mentions as normal (old behaviour). |
+| max_thread_length | 15 | The maximum number of bot posts in a row before it stops replying. A thread can be 10 or 10000 posts long, but the bot will stop after it has posted `max_thread_length` times. |
 
 
 ## Original README

@@ -9,6 +9,7 @@ import functions
 from bs4 import BeautifulSoup
 
 cfg = json.load(open('config.json', 'r'))
+threads = {}
 
 client = mastodon.Mastodon(
   client_id=cfg['client']['id'],
@@ -27,6 +28,23 @@ class ReplyListener(mastodon.StreamListener):
 		if notification['type'] == 'mention': #if we're mentioned:
 			acct = "@" + notification['account']['acct'] #get the account's @
 			post_id = notification['status']['id']
+			# check if we've already been participating in this thread
+			try:
+				context = client.status_context(post_id)
+			except:
+				print("failed to fetch thread context")
+				return
+			me = client.account_verify_credentials()['id']
+			posts = 0
+			for post in context['ancestors']:
+				if post['account']['id'] == me:
+					posts += 1
+					if posts >= cfg['max_thread_length']:
+						# stop replying
+						print("didn't reply (max_thread_length exceeded)")
+						return
+
+				threads[post_id] = [time.time(), 0]
 			mention = extract_toot(notification['status']['content'])
 			toot = functions.make_toot(True)['toot'] #generate a toot
 			toot = acct + " " + toot #prepend the @
