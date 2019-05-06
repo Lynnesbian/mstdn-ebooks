@@ -196,6 +196,14 @@ for f in following:
 			print('.', end='', flush=True)
 		print(" Done!")
 		db.commit()
+	except requests.HTTPError as e:
+		if e.response.status_code == 429:
+			print("Rate limit exceeded. This means we're downloading too many posts in quick succession. Saving toots to database and moving to next followed account.")
+			db.commit()
+		else:
+			# TODO: remove duplicate code
+			print("Encountered an error! Saving toots to database and moving to next followed account.")
+			db.commit()
 	except:
 		print("Encountered an error! Saving toots to database and moving to next followed account.")
 		db.commit()
