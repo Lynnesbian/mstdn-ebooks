@@ -181,7 +181,11 @@ for f in following:
 							#you might be wondering, "lynne, what if the instance ratelimits you after 40 posts, and they've made 60 since main.py was last run? wouldn't the bot miss 20 posts and never be able to see them?" to which i reply, "i know but i don't know how to fix it"
 							done = True
 					if cfg['lang']:
-						if oi['object']['contentMap'][cfg['lang']]:  # filter for language
+						try:
+							if oi['object']['contentMap'][cfg['lang']]:  # filter for language
+								insert_toot(oi, f, toot, c)
+						except KeyError:
+							#JSON doesn't have contentMap, just insert the toot irregardlessly
 							insert_toot(oi, f, toot, c)
 					else:
 						insert_toot(oi, f, toot, c)
