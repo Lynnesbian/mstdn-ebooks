@@ -15,11 +15,14 @@ args = parser.parse_args()
 
 cfg = json.load(open('config.json'))
 
-client = Mastodon(
-  client_id=cfg['client']['id'],
-  client_secret=cfg['client']['secret'], 
-  access_token=cfg['secret'], 
-  api_base_url=cfg['site'])
+client = None
+
+if not args.simulate:
+	client = Mastodon(
+	  client_id=cfg['client']['id'],
+	  client_secret=cfg['client']['secret'], 
+	  access_token=cfg['secret'], 
+	  api_base_url=cfg['site'])
 
 if __name__ == '__main__':
 	toot = functions.make_toot()
