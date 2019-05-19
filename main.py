@@ -11,8 +11,9 @@ import os, sqlite3, signal, sys, json, re, shutil
 import requests
 import functions
 
-scopes = ["read:statuses", "read:accounts", "read:follows", "write:statuses", "read:notifications"]
+scopes = ["read:statuses", "read:accounts", "read:follows", "write:statuses", "read:notifications", "write:accounts"]
 #cfg defaults
+
 cfg = {
 	"site": "https://botsin.space",
 	"cw": None,
@@ -21,10 +22,10 @@ cfg = {
 	"mention_handling": 1,
 	"max_thread_length": 15
 }
+
 try:
 	cfg.update(json.load(open('config.json', 'r')))
 except:
-
 	shutil.copy2("config.sample.json", "config.json")
 	cfg.update(json.load(open('config.json', 'r')))
 

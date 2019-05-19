@@ -39,6 +39,7 @@ class ReplyListener(mastodon.StreamListener):
 			posts = 0
 			for post in context['ancestors']:
 				if post['account']['id'] == me:
+					pin = post["id"] #Only used if pin is called, but easier to call here
 					posts += 1
 				if posts >= cfg['max_thread_length']:
 					# stop replying
@@ -46,14 +47,35 @@ class ReplyListener(mastodon.StreamListener):
 					return
 
 			mention = extract_toot(notification['status']['content'])
-			toot = functions.make_toot(True)['toot'] #generate a toot
-			toot = acct + " " + toot #prepend the @
-			print(acct + " says " + mention) #logging
-			visibility = notification['status']['visibility']
-			if visibility == "public":
-				visibility = "unlisted"
-			client.status_post(toot, post_id, visibility=visibility, spoiler_text = cfg['cw']) #send toost
-			print("replied with " + toot) #logging
+			if (mention == "pin") or (mention == "unpin"): #check for keywords
+				print("Found pin/unpin")
+				#get a list of people the bot is following
+				validusers = client.account_following(me)
+				for user in validusers:
+					if user["id"] == notification["account"]["id"]: #user is #valid
+						print("User is valid")
+						visibility = notification['status']['visibility']
+						if visibility == "public":
+							visibility = "unlisted"
+						if mention == "pin":
+							print("pin received, pinning")
+							client.status_pin(pin)
+							client.status_post("Toot pinned!", post_id, visibility=visibility, spoiler_text = cfg['cw'])
+						else:
+							print("unpin received, unpinning")
+							client.status_post("Toot unpinned!", post_id, visibility=visibility, spoiler_text = cfg['cw'])
+							client.status_unpin(pin)
+					else:
+						print("User is not valid")
+			else:
+				toot = functions.make_toot(True)['toot'] #generate a toot
+				toot = acct + " " + toot #prepend the @
+				print(acct + " says " + mention) #logging
+				visibility = notification['status']['visibility']
+				if visibility == "public":
+					visibility = "unlisted"
+				client.status_post(toot, post_id, visibility=visibility, spoiler_text = cfg['cw']) #send toost
+				print("replied with " + toot) #logging
 
 rl = ReplyListener()
 client.stream_user(rl) #go!
