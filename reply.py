@@ -59,10 +59,10 @@ class ReplyListener(mastodon.StreamListener):
 						if mention == "pin":
 							print("pin received, pinning")
 							client.status_pin(pin)
-							client.status_post("Toot pinned!", post_id, visibility=visibility spoiler_text = cfg['cw'])
+							client.status_post("Toot pinned!", post_id, visibility=visibility, spoiler_text = cfg['cw'])
 						else:
 							print("unpin received, unpinning")
-							client.status_post("Toot Unpinned!", post_id, visibility=visibility spoiler_text = cfg['cw'])
+							client.status_post("Toot unpinned!", post_id, visibility=visibility, spoiler_text = cfg['cw'])
 							client.status_unpin(pin)
 					else:
 						print("User is not valid")
