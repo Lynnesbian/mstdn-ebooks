@@ -28,19 +28,6 @@ except:
 	shutil.copy2("config.sample.json", "config.json")
 	cfg.update(json.load(open('config.json', 'r')))
 
-#if the user is using a (very!) old version that still uses the .secret files, migrate to the new method
-if os.path.exists("clientcred.secret"):
-	print("Upgrading to new storage method")
-	cc = open("clientcred.secret").read().split("\n")
-	cfg['client'] = {
-			"id": cc[0],
-			"secret": cc[1]
-	}
-	cfg['secret'] = open("usercred.secret").read().rstrip("\n")
-	os.remove("clientcred.secret")
-	os.remove("usercred.secret")
-
-
 if "client" not in cfg:
 	print("No application info -- registering application with {}".format(cfg['site']))
 	client_id, client_secret = Mastodon.create_app("mstdn-ebooks",
