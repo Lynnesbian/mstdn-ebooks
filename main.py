@@ -107,7 +107,7 @@ for f in following:
 		last_toot = last_toot[0]
 	else:
 		last_toot = 0
-	print("Harvesting toots for user @{}, starting from {}".format(f.acct, last_toot))
+	print("Downloading posts for user @{}, starting from {}".format(f.acct, last_toot))
 
 	#find the user's activitypub outbox
 	print("WebFingering...")
@@ -122,34 +122,43 @@ for f in following:
 		continue
 
 	try:
+		# 1. download host-meta to find webfing URL
 		r = requests.get("https://{}/.well-known/host-meta".format(instance), timeout=10)
+		# 2. use webfinger to find user's info page
 		uri = patterns["uri"].search(r.text).group(1)
 		uri = uri.format(uri = "{}@{}".format(f.username, instance))
 		r = requests.get(uri, headers={"Accept": "application/json"}, timeout=10)
 		j = r.json()
+		found = False
 		for link in j['links']:
 			if link['rel'] == 'self':
 				#this is a link formatted like "https://instan.ce/users/username", which is what we need
 				uri = link['href']
+				found = True
+				break
+		if not found:
+			print("Couldn't find a valid ActivityPub outbox URL.")
+
+		# 3. download first page of outbox
 		uri = "{}/outbox?page=true".format(uri)
-		r = requests.get(uri, timeout=10)
+		r = requests.get(uri, timeout=15)
 		j = r.json()
-	except Exception:
+	except:
 		print("oopsy woopsy!! we made a fucky wucky!!!\n(we're probably rate limited, please hang up and try again)")
 		sys.exit(1)
 
 	pleroma = False
-	if 'first' in j and type(j['first']) != str:
-		print("Pleroma instance detected")
+	if 'next' not in j:
+		print("Using Pleroma compatibility mode")
 		pleroma = True
 		j = j['first']
 	else:
-		print("Mastodon/Misskey instance detected")
+		print("Using standard mode")
 		uri = "{}&min_id={}".format(uri, last_toot)
 		r = requests.get(uri)
 		j = r.json()
 
-	print("Downloading and saving toots", end='', flush=True)
+	print("Downloading and saving posts", end='', flush=True)
 	done = False
 	try:
 		while not done and len(j['orderedItems']) > 0:
@@ -169,7 +178,7 @@ for f in following:
 							done = True
 					if cfg['lang']:
 						try:
-							if oi['object']['contentMap'][cfg['lang']]:  # filter for language
+							if oi['object']['contentMap'][cfg['lang']]: # filter for language
 								insert_toot(oi, f, toot, c)
 						except KeyError:
 							#JSON doesn't have contentMap, just insert the toot irregardlessly
@@ -179,10 +188,18 @@ for f in following:
 					pass
 				except:
 					pass #ignore any toots that don't successfully go into the DB
-			if not pleroma:
-				r = requests.get(j['prev'], timeout=15)
-			else:
-				r = requests.get(j['next'], timeout=15)
+
+			# get the next/previous page
+			try:
+				if not pleroma:
+					r = requests.get(j['prev'], timeout=15)
+				else:
+					r = requests.get(j['next'], timeout=15)
+			except requests.Timeout:
+				print("HTTP timeout, site did not respond within 15 seconds")
+			except:
+				print("An error occurred while trying to obtain more posts.")
+
 			j = r.json()
 			print('.', end='', flush=True)
 		print(" Done!")
@@ -193,10 +210,10 @@ for f in following:
 			db.commit()
 		else:
 			# TODO: remove duplicate code
-			print("Encountered an error! Saving toots to database and moving to next followed account.")
+			print("Encountered an error! Saving posts to database and moving to next followed account.")
 			db.commit()
 	except:
-		print("Encountered an error! Saving toots to database and moving to next followed account.")
+		print("Encountered an error! Saving posts to database and moving to next followed account.")
 		db.commit()
 
 print("Done!")

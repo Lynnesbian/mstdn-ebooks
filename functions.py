@@ -5,7 +5,7 @@
 
 import markovify
 from bs4 import BeautifulSoup
-import re, multiprocessing, sqlite3, shutil, os, json
+import re, multiprocessing, sqlite3, shutil, os, json, html
 
 cfg = json.load(open('config.json'))
 
@@ -48,21 +48,18 @@ def make_toot(force_markov = False, args = None):
 	return make_toot_markov()
 
 def make_toot_markov(query = None):
-	tries = 0
 	toot = None
-	while toot == None and tries < 10: #try to make a toot 10 times
-		pin, pout = multiprocessing.Pipe(False)
-		p = multiprocessing.Process(target = make_sentence, args = [pout])
-		p.start()
-		p.join(10) #wait 10 seconds to get something
-		if p.is_alive(): #if it's still trying to make a toot after 10 seconds
-			p.terminate()
-			p.join()
-			toot = None
-			tries = tries + 1 #give up, and increment tries by one
-		else:
-			toot = pin.recv()
-	if toot == None: #if we've tried and failed ten times, just give up
+	pin, pout = multiprocessing.Pipe(False)
+	p = multiprocessing.Process(target = make_sentence, args = [pout])
+	p.start()
+	p.join(5) #wait 5 seconds to get something
+	if p.is_alive(): #if it's still trying to make a toot after 5 seconds
+		p.terminate()
+		p.join()
+	else:
+		toot = pin.recv()
+
+	if toot == None:
 		toot = "Toot generation failed! Contact Lynne (lynnesbian@fedi.lynnesbian.space) for assistance."
 	return {
 			"toot": toot,
@@ -70,8 +67,7 @@ def make_toot_markov(query = None):
 		}
 
 def extract_toot(toot):
-	toot = toot.replace("&apos;", "'") #convert HTML stuff to normal stuff
-	toot = toot.replace("&quot;", '"') #ditto
+	toot = html.unescape(toot) #convert HTML escape codes to text
 	soup = BeautifulSoup(toot, "html.parser")
 	for lb in soup.select("br"): #replace <br> with linebreak
 		lb.insert_after("\n")

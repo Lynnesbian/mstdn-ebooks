@@ -20,8 +20,8 @@ client = None
 if not args.simulate:
 	client = Mastodon(
 	  client_id=cfg['client']['id'],
-	  client_secret=cfg['client']['secret'], 
-	  access_token=cfg['secret'], 
+	  client_secret=cfg['client']['secret'],
+	  access_token=cfg['secret'],
 	  api_base_url=cfg['site'])
 
 if __name__ == '__main__':
@@ -36,7 +36,7 @@ if __name__ == '__main__':
 				client.status_post(toot['toot'], visibility = 'unlisted', spoiler_text = cfg['cw'])
 		except Exception as err:
 			toot = {
-			"toot": "An unknown error that should never happen occurred. Maybe it's because of the spoiler text, which is {}. If not, I have no idea what went wrong. This is an error message -- contact lynnesbian@fedi.lynnesbian.space for assistance.".format(cfg['cw'])
+			"toot": "An error occurred while submitting the generated post. Contact lynnesbian@fedi.lynnesbian.space for assistance."
 			}
 			client.status_post(toot['toot'], visibility = 'unlisted', spoiler_text = "Error!")
 	try:

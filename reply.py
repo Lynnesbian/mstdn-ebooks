@@ -4,7 +4,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import mastodon
-import os, random, re, json
+import random, re, json
 import functions
 from bs4 import BeautifulSoup
 
@@ -13,8 +13,8 @@ threads = {}
 
 client = mastodon.Mastodon(
   client_id=cfg['client']['id'],
-  client_secret=cfg['client']['secret'], 
-  access_token=cfg['secret'], 
+  client_secret=cfg['client']['secret'],
+  access_token=cfg['secret'],
   api_base_url=cfg['site'])
 
 def extract_toot(toot):
@@ -28,6 +28,7 @@ class ReplyListener(mastodon.StreamListener):
 		if notification['type'] == 'mention': #if we're mentioned:
 			acct = "@" + notification['account']['acct'] #get the account's @
 			post_id = notification['status']['id']
+
 			# check if we've already been participating in this thread
 			try:
 				context = client.status_context(post_id)
@@ -39,10 +40,10 @@ class ReplyListener(mastodon.StreamListener):
 			for post in context['ancestors']:
 				if post['account']['id'] == me:
 					posts += 1
-					if posts >= cfg['max_thread_length']:
-						# stop replying
-						print("didn't reply (max_thread_length exceeded)")
-						return
+				if posts >= cfg['max_thread_length']:
+					# stop replying
+					print("didn't reply (max_thread_length exceeded)")
+					return
 
 			mention = extract_toot(notification['status']['content'])
 			toot = functions.make_toot(True)['toot'] #generate a toot
