@@ -23,11 +23,7 @@ cfg = {
 	"max_thread_length": 15
 }
 
-try:
-	cfg.update(json.load(open('config.json', 'r')))
-except:
-	shutil.copy2("config.sample.json", "config.json")
-	cfg.update(json.load(open('config.json', 'r')))
+cfg.update(json.load(open('config.json', 'r')))
 
 if "client" not in cfg:
 	print("No application info -- registering application with {}".format(cfg['site']))
