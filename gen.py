@@ -4,7 +4,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from mastodon import Mastodon
-import argparse, sys, traceback, json
+import argparse, sys, traceback, json, re
 import functions
 
 parser = argparse.ArgumentParser(description='Generate and post a toot.')
@@ -26,6 +26,8 @@ if not args.simulate:
 
 if __name__ == '__main__':
 	toot = functions.make_toot()
+	if cfg['strip_paired_punctuation']:
+		toot = re.sub(r"[\[\]\(\)\{\}\"“”«»„]", "", toot)
 	if not args.simulate:
 		try:
 			if toot['media'] != None:
