@@ -22,19 +22,3 @@ Configuring mstdn-ebooks is accomplished by editing `config.json`.
 | learn_from_cw | false |  If true, mstdn-ebooks will learn from CW'd posts. |
 | mention_handling | 1 |  0: Never use mentions. 1: Only generate fake mentions in the middle of posts, never at the start. 2: Use mentions as normal (old behaviour). |
 | max_thread_length | 15 | The maximum number of bot posts in a row before it stops replying. A thread can be 10 or 10000 posts long, but the bot will stop after it has posted `max_thread_length` times. |
-
-
-## Original README
-hey look it's an ebooks bot
-
-python3
-
-install the requirements with `sudo pip3 install -r requirements.txt`
-
-make a bot (probably on bots in space) and follow the target accounts
-
-run `python3 main.py` to login and scrape
-
-run `python3 gen.py` to make a toot
-
-cron is an okay choice to make it toot regularly
