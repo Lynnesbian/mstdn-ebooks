@@ -11,6 +11,15 @@ This version makes quite a few changes from [the original](https://github.com/Je
 ## Install/usage guide
 An installation and usage guide is available [here](https://cloud.lynnesbian.space/s/jozbRi69t4TpD95). It's primarily targeted at Linux, but it should be possible on BSD, macOS, etc. I've also put some effort into providing steps for Windows, but I can't make any guarantees as to its effectiveness.
 
+## Compatibility
+| Software  | Downloading statuses | Posting | Replying                                                    |
+|-----------|----------------------|---------|-------------------------------------------------------------|
+| Mastodon  | Yes                  | Yes     | Yes                                                         |
+| Pleroma   | Yes                  | Yes     | [No](https://git.pleroma.social/pleroma/pleroma/issues/416) |
+| Misskey   | Yes                  | No      | No                                                          |
+| diaspora* | No                   | No      | No                                                          |
+| Others    | Probably             | No      | No                                                          |
+
 ## Configuration
 Configuring mstdn-ebooks is accomplished by editing `config.json`.
 
