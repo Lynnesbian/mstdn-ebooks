@@ -20,7 +20,8 @@ cfg = {
 	"instance_blacklist": ["bofa.lol", "witches.town", "knzk.me"],
 	"learn_from_cw": False,
 	"mention_handling": 1,
-	"max_thread_length": 15
+	"max_thread_length": 15,
+	"strip_paired_punctuation": False
 }
 
 cfg.update(json.load(open('config.json', 'r')))

@@ -31,3 +31,4 @@ Configuring mstdn-ebooks is accomplished by editing `config.json`.
 | learn_from_cw | false |  If true, mstdn-ebooks will learn from CW'd posts. |
 | mention_handling | 1 |  0: Never use mentions. 1: Only generate fake mentions in the middle of posts, never at the start. 2: Use mentions as normal (old behaviour). |
 | max_thread_length | 15 | The maximum number of bot posts in a thread before it stops replying. A thread can be 10 or 10000 posts long, but the bot will stop after it has posted `max_thread_length` times. |
+| strip_paired_punctuation | false | If true, mstdn-ebooks will remove punctuation that commonly appears in pairs, like " and (). This avoids the issue of posts that open a bracket without closing it. |
