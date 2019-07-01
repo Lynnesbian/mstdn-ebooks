@@ -9,7 +9,6 @@ import functions
 from bs4 import BeautifulSoup
 
 cfg = json.load(open('config.json', 'r'))
-threads = {}
 
 client = mastodon.Mastodon(
   client_id=cfg['client']['id'],
