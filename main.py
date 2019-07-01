@@ -17,7 +17,7 @@ scopes = ["read:statuses", "read:accounts", "read:follows", "write:statuses", "r
 cfg = {
 	"site": "https://botsin.space",
 	"cw": None,
-	"instance_blacklist": ["bofa.lol", "witches.town"],
+	"instance_blacklist": ["bofa.lol", "witches.town", "knzk.me"],
 	"learn_from_cw": False,
 	"mention_handling": 1,
 	"max_thread_length": 15
@@ -123,7 +123,7 @@ for f in following:
 		continue
 
 	try:
-		# 1. download host-meta to find webfing URL
+		# 1. download host-meta to find webfinger URL
 		r = requests.get("https://{}/.well-known/host-meta".format(instance), timeout=10)
 		# 2. use webfinger to find user's info page
 		uri = patterns["uri"].search(r.text).group(1)
