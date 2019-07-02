@@ -30,18 +30,11 @@ if __name__ == '__main__':
 		toot = re.sub(r"[\[\]\(\)\{\}\"“”«»„]", "", toot)
 	if not args.simulate:
 		try:
-			if toot['media'] != None:
-				mediaID = client.media_post(toot['media'], description = toot['toot'])
-				client.status_post(toot['toot'].replace("\n", " "),
-					media_ids = [mediaID], visibility = "unlisted", spoiler_text = cfg['cw'])
-			else:
-				client.status_post(toot['toot'], visibility = 'unlisted', spoiler_text = cfg['cw'])
+			client.status_post(toot['toot'], visibility = 'unlisted', spoiler_text = cfg['cw'])
 		except Exception as err:
-			toot = {
-			"toot": "An error occurred while submitting the generated post. Contact lynnesbian@fedi.lynnesbian.space for assistance."
-			}
+			toot = "An error occurred while submitting the generated post. Contact lynnesbian@fedi.lynnesbian.space for assistance."
 			client.status_post(toot['toot'], visibility = 'unlisted', spoiler_text = "Error!")
 	try:
-		print(toot['toot'])
+		print(toot)
 	except UnicodeEncodeError:
-		print(toot['toot'].encode("ascii", "ignore")) # encode as ASCII, dropping any non-ASCII characters
+		print(toot.encode("ascii", "ignore")) # encode as ASCII, dropping any non-ASCII characters

@@ -67,7 +67,7 @@ class ReplyListener(mastodon.StreamListener):
 					else:
 						print("User is not valid")
 			else:
-				toot = functions.make_toot(True)['toot'] #generate a toot
+				toot = functions.make_toot(True) #generate a toot
 				toot = acct + " " + toot #prepend the @
 				print(acct + " says " + mention) #logging
 				visibility = notification['status']['visibility']

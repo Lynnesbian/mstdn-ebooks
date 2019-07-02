@@ -61,10 +61,7 @@ def make_toot_markov(query = None):
 
 	if toot == None:
 		toot = "Toot generation failed! Contact Lynne (lynnesbian@fedi.lynnesbian.space) for assistance."
-	return {
-			"toot": toot,
-			"media": None
-		}
+	return toot
 
 def extract_toot(toot):
 	toot = html.unescape(toot) #convert HTML escape codes to text
