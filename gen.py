@@ -30,10 +30,10 @@ if __name__ == '__main__':
 		toot = re.sub(r"[\[\]\(\)\{\}\"“”«»„]", "", toot)
 	if not args.simulate:
 		try:
-			client.status_post(toot['toot'], visibility = 'unlisted', spoiler_text = cfg['cw'])
+			client.status_post(toot, visibility = 'unlisted', spoiler_text = cfg['cw'])
 		except Exception as err:
 			toot = "An error occurred while submitting the generated post. Contact lynnesbian@fedi.lynnesbian.space for assistance."
-			client.status_post(toot['toot'], visibility = 'unlisted', spoiler_text = "Error!")
+			client.status_post(toot, visibility = 'unlisted', spoiler_text = "Error!")
 	try:
 		print(toot)
 	except UnicodeEncodeError:
