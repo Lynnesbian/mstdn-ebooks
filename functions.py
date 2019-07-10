@@ -26,9 +26,14 @@ def make_sentence(output):
 	for toot in toots: # TODO: find a more efficient way to do this
 		toots_str += "\n{}".format(toot[0])
 	model = nlt_fixed(toots_str)
-	toots_str = None
 	db.close()
 	os.remove("toots-copy.db")
+
+	if toots_str.rstrip("\n") == "":
+		output.send("Database is empty! Try running main.py.")
+		return
+
+	toots_str = None
 
 	sentence = None
 	tries = 0
