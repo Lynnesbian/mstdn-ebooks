@@ -8,12 +8,14 @@ import argparse, json, re
 import functions
 
 parser = argparse.ArgumentParser(description='Generate and post a toot.')
+parser.add_argument('-c', '--cfg', dest='cfg', action='', default='config.json', nargs='?',
+	help="Specify a custom location for config.json.")
 parser.add_argument('-s', '--simulate', dest='simulate', action='store_true',
 	help="Print the toot without actually posting it. Use this to make sure your bot's actually working.")
 
 args = parser.parse_args()
 
-cfg = json.load(open('config.json'))
+cfg = json.load(open(args.cfg))
 
 client = None
 
@@ -25,7 +27,7 @@ if not args.simulate:
 	  api_base_url=cfg['site'])
 
 if __name__ == '__main__':
-	toot = functions.make_toot()
+	toot = functions.make_toot(cfg)
 	if cfg['strip_paired_punctuation']:
 		toot = re.sub(r"[\[\]\(\)\{\}\"“”«»„]", "", toot)
 	if not args.simulate:

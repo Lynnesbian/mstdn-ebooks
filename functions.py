@@ -5,11 +5,9 @@
 
 import markovify
 from bs4 import BeautifulSoup
-import re, multiprocessing, sqlite3, shutil, os, json, html
+import re, multiprocessing, sqlite3, shutil, os, html
 
-cfg = json.load(open('config.json'))
-
-def make_sentence(output):
+def make_sentence(output, cfg):
 	class nlt_fixed(markovify.NewlineText): #modified version of NewlineText that never rejects sentences
 		def test_sentence_input(self, sentence):
 			return True #all sentences are valid <3
@@ -49,13 +47,10 @@ def make_sentence(output):
 
 	output.send(sentence)
 
-def make_toot(force_markov = False, args = None):
-	return make_toot_markov()
-
-def make_toot_markov(query = None):
+def make_toot(cfg):
 	toot = None
 	pin, pout = multiprocessing.Pipe(False)
-	p = multiprocessing.Process(target = make_sentence, args = [pout])
+	p = multiprocessing.Process(target = make_sentence, args = [pout, cfg])
 	p.start()
 	p.join(5) #wait 5 seconds to get something
 	if p.is_alive(): #if it's still trying to make a toot after 5 seconds

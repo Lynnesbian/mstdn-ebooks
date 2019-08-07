@@ -7,9 +7,15 @@
 from mastodon import Mastodon
 from os import path
 from bs4 import BeautifulSoup
-import os, sqlite3, signal, sys, json, re, shutil
+import os, sqlite3, signal, sys, json, re, shutil, argparse
 import requests
 import functions
+
+parser = argparse.ArgumentParser(description='Log in and download posts.')
+parser.add_argument('-c', '--cfg', dest='cfg', action='', default='config.json', nargs='?',
+	help="Specify a custom location for config.json.")
+
+args = parser.parse_args()
 
 scopes = ["read:statuses", "read:accounts", "read:follows", "write:statuses", "read:notifications", "write:accounts"]
 #cfg defaults
@@ -17,14 +23,16 @@ scopes = ["read:statuses", "read:accounts", "read:follows", "write:statuses", "r
 cfg = {
 	"site": "https://botsin.space",
 	"cw": None,
-	"instance_blacklist": ["bofa.lol", "witches.town", "knzk.me"],
+	"instance_blacklist": ["bofa.lol", "witches.town", "knzk.me"], # rest in piece
 	"learn_from_cw": False,
 	"mention_handling": 1,
 	"max_thread_length": 15,
 	"strip_paired_punctuation": False
 }
 
-cfg.update(json.load(open('config.json', 'r')))
+cfg.update(json.load(open(args.cfg, 'r')))
+
+print("Using {} as configuration file".format(args.cfg))
 
 if "client" not in cfg:
 	print("No application info -- registering application with {}".format(cfg['site']))
@@ -47,7 +55,7 @@ if "secret" not in cfg:
 	print("Open this URL and authenticate to give mstdn-ebooks access to your bot's account: {}".format(client.auth_request_url(scopes=scopes)))
 	cfg['secret'] = client.log_in(code=input("Secret: "), scopes=scopes)
 
-json.dump(cfg, open("config.json", "w+"))
+json.dump(cfg, open(args.cfg, "w+"))
 
 def extract_toot(toot):
 	toot = functions.extract_toot(toot)

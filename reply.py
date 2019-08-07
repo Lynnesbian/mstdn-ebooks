@@ -4,11 +4,17 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import mastodon
-import random, re, json
+import random, re, json, argparse
 import functions
 from bs4 import BeautifulSoup
 
-cfg = json.load(open('config.json', 'r'))
+parser = argparse.ArgumentParser(description='Reply service. Leave running in the background.')
+parser.add_argument('-c', '--cfg', dest='cfg', action='', default='config.json', nargs='?',
+	help="Specify a custom location for config.json.")
+
+args = parser.parse_args()
+
+cfg = json.load(open(args.cfg, 'r'))
 
 client = mastodon.Mastodon(
   client_id=cfg['client']['id'],
@@ -67,7 +73,7 @@ class ReplyListener(mastodon.StreamListener):
 					else:
 						print("User is not valid")
 			else:
-				toot = functions.make_toot(True) #generate a toot
+				toot = functions.make_toot(cfg) #generate a toot
 				toot = acct + " " + toot #prepend the @
 				print(acct + " says " + mention) #logging
 				visibility = notification['status']['visibility']
