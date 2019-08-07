@@ -21,7 +21,7 @@ An installation and usage guide is available [here](https://cloud.lynnesbian.spa
 | Others    | Probably             | No      | No                                                          |
 
 ## Configuration
-Configuring mstdn-ebooks is accomplished by editing `config.json`.
+Configuring mstdn-ebooks is accomplished by editing `config.json`. If you want to use a different file for configuration, specify it with the `--cfg` argument. For example, if you want to use `/home/lynne/c.json` instead, you would run `python3 main.py --cfg /home/lynne/c.json` instead of just `python3 main.py`
 
 | Setting | Default | Meaning |
 |--------------------|------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
