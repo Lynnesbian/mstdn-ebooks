@@ -9,7 +9,7 @@ import functions
 from bs4 import BeautifulSoup
 
 parser = argparse.ArgumentParser(description='Reply service. Leave running in the background.')
-parser.add_argument('-c', '--cfg', dest='cfg', action='', default='config.json', nargs='?',
+parser.add_argument('-c', '--cfg', dest='cfg', default='config.json', nargs='?',
 	help="Specify a custom location for config.json.")
 
 args = parser.parse_args()

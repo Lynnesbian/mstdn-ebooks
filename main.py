@@ -12,7 +12,7 @@ import requests
 import functions
 
 parser = argparse.ArgumentParser(description='Log in and download posts.')
-parser.add_argument('-c', '--cfg', dest='cfg', action='', default='config.json', nargs='?',
+parser.add_argument('-c', '--cfg', dest='cfg', default='config.json', nargs='?',
 	help="Specify a custom location for config.json.")
 
 args = parser.parse_args()

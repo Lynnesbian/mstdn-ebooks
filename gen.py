@@ -8,7 +8,7 @@ import argparse, json, re
 import functions
 
 parser = argparse.ArgumentParser(description='Generate and post a toot.')
-parser.add_argument('-c', '--cfg', dest='cfg', action='', default='config.json', nargs='?',
+parser.add_argument('-c', '--cfg', dest='cfg', default='config.json', nargs='?',
 	help="Specify a custom location for config.json.")
 parser.add_argument('-s', '--simulate', dest='simulate', action='store_true',
 	help="Print the toot without actually posting it. Use this to make sure your bot's actually working.")
