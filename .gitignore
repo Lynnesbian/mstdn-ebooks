@@ -10,3 +10,4 @@ __pycache__/*
 .vscode/
 .editorconfig
 .*.swp
+config.json
