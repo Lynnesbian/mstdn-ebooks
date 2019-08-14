@@ -30,7 +30,10 @@ cfg = {
 	"strip_paired_punctuation": False
 }
 
-cfg.update(json.load(open(args.cfg, 'r')))
+try:
+	cfg.update(json.load(open(args.cfg, 'r')))
+except FileNotFoundError:
+	open(args.cfg, "w").write("{}")
 
 print("Using {} as configuration file".format(args.cfg))
 
