@@ -77,12 +77,24 @@ following = client.account_following(me.id)
 db = sqlite3.connect("toots.db")
 db.text_factory=str
 c = db.cursor()
-c.execute("CREATE TABLE IF NOT EXISTS `toots` (sortid INT NOT NULL, id VARCHAR NOT NULL UNIQUE PRIMARY KEY, cw INT NOT NULL DEFAULT 0, userid VARCHAR NOT NULL, uri VARCHAR NOT NULL, content VARCHAR NOT NULL) WITHOUT ROWID")
+c.execute("CREATE TABLE IF NOT EXISTS `toots` (sortid INT NOT NULL DEFAULT 0, id VARCHAR NOT NULL UNIQUE PRIMARY KEY, cw INT NOT NULL DEFAULT 0, userid VARCHAR NOT NULL, uri VARCHAR NOT NULL, content VARCHAR NOT NULL) WITHOUT ROWID")
 try:
-	c.execute("ALTER TABLE `toots` ADD COLUMN sortid INT NOT NULL")
+	c.execute("ALTER TABLE `toots` ADD COLUMN sortid INT NOT NULL DEFAULT 0")
+	for f in following:
+		last_toot = c.execute("SELECT id FROM `toots` WHERE userid LIKE ? ORDER BY id DESC LIMIT 1", (f.id,)).fetchone()
+		if last_toot != None:
+			last_toot = last_toot[0]
+		else:
+			last_toot = 0
+		
+		c.execute("UPDATE `toots` SET sortid = 1 WHERE id LIKE ? AND userid LIKE ?", (last_toot, f.id))
+	
+	
 except:
 	pass # column already exists
 db.commit()
+
+sys.exit(0)
 
 def handleCtrlC(signal, frame):
 	print("\nPREMATURE EVACUATION - Saving chunks")
@@ -99,7 +111,7 @@ patterns = {
 }
 
 
-def insert_toot(oii, acc, post, cursor):  # extracted to prevent duplication
+def insert_toot(oii, acc, post, cursor): # extracted to prevent duplication
 	pid = patterns["pid"].search(oii['object']['id']).group(0)
 	cursor.execute("REPLACE INTO toots (id, cw, userid, uri, content) VALUES (?, ?, ?, ?, ?)", (
 		pid,
