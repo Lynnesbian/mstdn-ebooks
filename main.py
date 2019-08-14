@@ -77,9 +77,9 @@ following = client.account_following(me.id)
 db = sqlite3.connect("toots.db")
 db.text_factory=str
 c = db.cursor()
-c.execute("CREATE TABLE IF NOT EXISTS `toots` (id INT NOT NULL UNIQUE PRIMARY KEY, cw INT NOT NULL DEFAULT 0, userid INT NOT NULL, uri VARCHAR NOT NULL, content VARCHAR NOT NULL) WITHOUT ROWID")
+c.execute("CREATE TABLE IF NOT EXISTS `toots` (sortid INT NOT NULL, id VARCHAR NOT NULL UNIQUE PRIMARY KEY, cw INT NOT NULL DEFAULT 0, userid VARCHAR NOT NULL, uri VARCHAR NOT NULL, content VARCHAR NOT NULL) WITHOUT ROWID")
 try:
-	c.execute("ALTER TABLE `toots` ADD COLUMN cw INT NOT NULL DEFAULT 0")
+	c.execute("ALTER TABLE `toots` ADD COLUMN sortid INT NOT NULL")
 except:
 	pass # column already exists
 db.commit()
