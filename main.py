@@ -82,7 +82,7 @@ following = client.account_following(me.id)
 db = sqlite3.connect("toots.db")
 db.text_factory=str
 c = db.cursor()
-c.execute("CREATE TABLE IF NOT EXISTS `toots_temp` (sortid INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT, id VARCHAR NOT NULL, cw INT NOT NULL DEFAULT 0, userid VARCHAR NOT NULL, uri VARCHAR NOT NULL, content VARCHAR NOT NULL)")
+c.execute("CREATE TABLE IF NOT EXISTS `toots` (sortid INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT, id VARCHAR NOT NULL, cw INT NOT NULL DEFAULT 0, userid VARCHAR NOT NULL, uri VARCHAR NOT NULL, content VARCHAR NOT NULL)")
 
 tableinfo = c.execute("PRAGMA table_info(`toots`)").fetchall()
 found = False
