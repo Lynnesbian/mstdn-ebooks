@@ -15,7 +15,7 @@ An installation and usage guide is available [here](https://cloud.lynnesbian.spa
 | Software  | Downloading statuses | Posting | Replying                                                    |
 |-----------|----------------------|---------|-------------------------------------------------------------|
 | Mastodon  | Yes                  | Yes     | Yes                                                         |
-| Pleroma   | Yes                  | Yes     | [No](https://git.pleroma.social/pleroma/pleroma/issues/416) |
+| Pleroma   | Somewhat             | Yes     | [No](https://git.pleroma.social/pleroma/pleroma/issues/416) |
 | Misskey   | Yes                  | No      | No                                                          |
 | diaspora* | No                   | No      | No                                                          |
 | Others    | Probably             | No      | No                                                          |
