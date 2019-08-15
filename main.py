@@ -4,7 +4,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from mastodon import Mastodon
+from mastodon import Mastodon, MastodonUnauthorizedError
 from os import path
 from bs4 import BeautifulSoup
 import os, sqlite3, signal, sys, json, re, shutil, argparse
@@ -71,30 +71,53 @@ client = Mastodon(
 	access_token=cfg['secret'],
 	api_base_url=cfg['site'])
 
-me = client.account_verify_credentials()
+try:
+	me = client.account_verify_credentials()
+except MastodonUnauthorizedError:
+	print("The provided access token in {} is invalid. Please delete {} and run main.py again.".format(args.cfg, args.cfg))
+	sys.exit(1)
+
 following = client.account_following(me.id)
 
 db = sqlite3.connect("toots.db")
 db.text_factory=str
 c = db.cursor()
-c.execute("CREATE TABLE IF NOT EXISTS `toots` (sortid INT NOT NULL DEFAULT 0, id VARCHAR NOT NULL UNIQUE PRIMARY KEY, cw INT NOT NULL DEFAULT 0, userid VARCHAR NOT NULL, uri VARCHAR NOT NULL, content VARCHAR NOT NULL) WITHOUT ROWID")
-try:
-	c.execute("ALTER TABLE `toots` ADD COLUMN sortid INT NOT NULL DEFAULT 0")
-	for f in following:
-		last_toot = c.execute("SELECT id FROM `toots` WHERE userid LIKE ? ORDER BY id DESC LIMIT 1", (f.id,)).fetchone()
-		if last_toot != None:
-			last_toot = last_toot[0]
-		else:
-			last_toot = 0
-		
-		c.execute("UPDATE `toots` SET sortid = 1 WHERE id LIKE ? AND userid LIKE ?", (last_toot, f.id))
-	
-	
-except:
-	pass # column already exists
-db.commit()
+c.execute("CREATE TABLE IF NOT EXISTS `toots_temp` (sortid INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT, id VARCHAR NOT NULL, cw INT NOT NULL DEFAULT 0, userid VARCHAR NOT NULL, uri VARCHAR NOT NULL, content VARCHAR NOT NULL)")
 
-sys.exit(0)
+tableinfo = c.execute("PRAGMA table_info(`toots`)").fetchall()
+found = False
+columns = []
+for entry in tableinfo:
+	if entry[1] == "sortid":
+		found = True
+		break
+	columns.append(entry[1])
+
+if not found:
+	print("Migrating to new database format. Please wait...")
+	print("WARNING: If any of the accounts your bot is following are Pleroma users, please delete toots.db and run main.py again to create it anew.")
+	try:
+		c.execute("DROP TABLE `toots_temp`")
+	except:
+		pass
+
+	c.execute("CREATE TABLE `toots_temp` (sortid INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT, id VARCHAR NOT NULL, cw INT NOT NULL DEFAULT 0, userid VARCHAR NOT NULL, uri VARCHAR NOT NULL, content VARCHAR NOT NULL)")
+	for f in following:
+		user_toots = c.execute("SELECT * FROM `toots` WHERE userid LIKE ? ORDER BY id", (f.id,)).fetchall()
+		if user_toots == None:
+			continue
+
+		if columns[-1] == "cw":
+			for toot in user_toots:
+				c.execute("INSERT INTO `toots_temp` (id, userid, uri, content, cw) VALUES (?, ?, ?, ?, ?)", toot)
+		else:
+			for toot in user_toots:
+				c.execute("INSERT INTO `toots_temp` (id, cw, userid, uri, content) VALUES (?, ?, ?, ?, ?)", toot)
+
+	c.execute("DROP TABLE `toots`")
+	c.execute("ALTER TABLE `toots_temp` RENAME TO `toots`")
+	
+db.commit()
 
 def handleCtrlC(signal, frame):
 	print("\nPREMATURE EVACUATION - Saving chunks")
@@ -123,7 +146,7 @@ def insert_toot(oii, acc, post, cursor): # extracted to prevent duplication
 
 
 for f in following:
-	last_toot = c.execute("SELECT id FROM `toots` WHERE userid LIKE ? ORDER BY id DESC LIMIT 1", (f.id,)).fetchone()
+	last_toot = c.execute("SELECT id FROM `toots` WHERE userid LIKE ? ORDER BY sortid DESC LIMIT 1", (f.id,)).fetchone()
 	if last_toot != None:
 		last_toot = last_toot[0]
 	else:
