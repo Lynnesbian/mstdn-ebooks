@@ -193,7 +193,7 @@ for f in following:
 		sys.exit(1)
 
 	pleroma = False
-	if 'next' not in j:
+	if 'next' not in j and 'prev' in j:
 		print("Using Pleroma compatibility mode")
 		pleroma = True
 		j = j['first']
@@ -243,6 +243,8 @@ for f in following:
 					r = requests.get(j['next'], timeout=15)
 			except requests.Timeout:
 				print("HTTP timeout, site did not respond within 15 seconds")
+			except KeyError:
+				print("Couldn't get next page - we've probably got all the posts")
 			except:
 				print("An error occurred while trying to obtain more posts.")
 
