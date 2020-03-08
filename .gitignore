@@ -6,7 +6,7 @@ meme.jpg
 toots.db
 toots.db-journal
 toots.db-wal
-__pycache__/*
+__pycache__/
 .vscode/
 .editorconfig
 .*.swp

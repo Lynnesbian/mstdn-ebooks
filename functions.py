@@ -20,16 +20,17 @@ def make_sentence(output, cfg):
 		toots = c.execute("SELECT content FROM `toots` ORDER BY RANDOM() LIMIT 10000").fetchall()
 	else:
 		toots = c.execute("SELECT content FROM `toots` WHERE cw = 0 ORDER BY RANDOM() LIMIT 10000").fetchall()
-	toots_str = ""
-	for toot in toots: # TODO: find a more efficient way to do this
-		toots_str += "\n{}".format(toot[0])
-	model = nlt_fixed(toots_str)
-	db.close()
-	os.remove("toots-copy.db")
 
-	if toots_str.rstrip("\n") == "":
+	if len(toots) == 0:
 		output.send("Database is empty! Try running main.py.")
 		return
+	
+	model = nlt_fixed(
+		"\n".join([toot[0] for toot in toots])
+	)
+	
+	db.close()
+	os.remove("toots-copy.db")
 
 	toots_str = None
 
