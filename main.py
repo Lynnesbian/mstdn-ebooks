@@ -200,7 +200,7 @@ for f in following:
 	if 'next' not in j and 'prev' not in j:
 		# there's only one page of results, don't bother doing anything special
 		pass
-	elif 'next' not in j:
+	elif 'prev' not in j:
 		print("Using Pleroma compatibility mode")
 		pleroma = True
 		j = j['first']
