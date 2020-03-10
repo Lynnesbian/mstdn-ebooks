@@ -203,7 +203,11 @@ for f in following:
 	elif 'prev' not in j:
 		print("Using Pleroma compatibility mode")
 		pleroma = True
-		j = j['first']
+		if 'first' in j:
+			# apparently there used to be a 'first' field in pleroma's outbox output, but it's not there any more
+			# i'll keep this for backwards compatibility with older pleroma instances
+			# it was removed in pleroma 1.0.7 - https://git.pleroma.social/pleroma/pleroma/-/blob/841e4e4d835b8d1cecb33102356ca045571ef1fc/CHANGELOG.md#107-2019-09-26
+			j = j['first']
 	else:
 		print("Using standard mode")
 		uri = "{}&min_id={}".format(uri, last_toot)
