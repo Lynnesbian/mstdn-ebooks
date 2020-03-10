@@ -1,5 +1,4 @@
 # mstdn-ebooks
-
 **Lynnear Edition**
 
 This version makes quite a few changes from [the original](https://github.com/Jess3Jane/mastodon-ebooks), such as:
@@ -7,7 +6,21 @@ This version makes quite a few changes from [the original](https://github.com/Je
 - Non-Markov stuff
 - Stores toots in a sqlite database rather than a text file
   - Doesn't unnecessarily redownload all toots every time
-  
+
+## FediBooks
+Before you use mstdn-ebooks to create your own ebooks bot, I recommend checking out [FediBooks](https://fedibooks.com). Compared to mstdn-ebooks, FediBooks offers a few advantages:
+- Hosted and maintained by someone else - you don't have to worry about updating, keeping the computer on, etc
+- No installation required
+- A nice UI for managing your bot(s)
+- Easy configuration
+
+However, there are still a few reasons you might want to use mstdn-ebooks instead:
+- Your data stays local to your machine
+- More customisation potential - you can edit mstdn-ebooks to add functionality
+- Replying more (in)frequently than FediBooks allows
+
+Like mstdn-ebooks, FediBooks is free, both as in free of charge and free to modify, self-host, and more.
+
 ## Install/usage guide
 An installation and usage guide is available [here](https://cloud.lynnesbian.space/s/jozbRi69t4TpD95). It's primarily targeted at Linux, but it should be possible on BSD, macOS, etc. I've also put some effort into providing steps for Windows, but I can't make any guarantees as to its effectiveness.
 
