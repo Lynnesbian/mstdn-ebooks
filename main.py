@@ -193,7 +193,10 @@ for f in following:
 		sys.exit(1)
 
 	pleroma = False
-	if 'next' not in j:
+	if 'next' not in j and 'prev' not in j:
+		# there's only one page of results, don't bother doing anything special
+		pass
+	elif 'next' not in j:
 		print("Using Pleroma compatibility mode")
 		pleroma = True
 		j = j['first']
