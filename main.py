@@ -35,6 +35,10 @@ try:
 except FileNotFoundError:
 	open(args.cfg, "w").write("{}")
 
+if not cfg['site'].startswith("https://") and not cfg['site'].startswith("http://"):
+	print("Site must begin with 'https://' or 'http://'. Value '{}' is invalid - try 'https://{}' instead.".format(cfg['site']))
+	sys.exit(1)
+
 print("Using {} as configuration file".format(args.cfg))
 
 if "client" not in cfg:
