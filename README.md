@@ -22,18 +22,7 @@ However, there are still a few reasons you might want to use mstdn-ebooks instea
 Like mstdn-ebooks, FediBooks is free, both as in free of charge and free to modify, self-host, and more.
 
 ## Secure Fetch
-Secure fetch (aka authorised fetches, authenticated fetches, secure mode...) is *not* supported by mstdn-ebooks. Secure fetch requires that all incoming requests for posts are signed and originate from an authorised instance, and this is an impossible request for mstdn-ebooks to fulfill, as it's not an instance at all. Without getting too deep into the technical details, secure fetch means that the instance you're downloading posts from will check to see if the download request comes from an authorised instace (this usually means an instance that hasn't been defederated), and requires that each instance hosts a publicly accessible file to "prove" that it really is an authorised instance, as well as some other security measures (namely a HTTP signature). As mstdn-ebooks can not provide a publicly accessible file, as that would require running a web server, it is impossible to fulfill this request, and all of mstdn-ebooks' incoming requests will be denied by any instance using secure fetch.
-
-There is no way around this - if Mastodon/Pleroma/etc were to implement a check that said "if it's an ebooks bot, let it through anyway", anyone could pretend to be an ebooks bot, even if they were on the blacklist. The only solution to this problem is to use software that can serve a publicly accessible file to prove that it's not on the blacklist, and this can only be done by software that operates on a server - something like FediBooks.
-
-This problem is somewhat unique to the way mstdn-ebooks functions. Rather than using the Mastodon API to fetch posts, mstdn-ebooks uses ActivityPub outboxes. This has numerous benefits, such as:
-- Ensuring that all public posts can be downloaded. If mstdn-ebooks used the Mastodon API, and your bot was on instance A, learning from a user on instance B, then mstdn-ebooks would only be able to "see" your posts that had already federated to instance A. This is a huge benefit, and the reason that I rewrote mstdn-ebooks to use ActivityPub outboxes in the first place.
-- Not being tied to the Mastodon API
-- Allowing for new ActivityPub compliant servers to be supported with ease
-
-The only drawbacks are that the code is more complex (which doesn't affect the end user) and that mstdn-ebooks doesn't work with secure fetch (which only affects the end user if the instance has it enabled).
-
-Note that as of the time of writing, FediBooks does not suport secure fetch either. This isn't because it would be impossible - rather, because I haven't implemented this feature yet. If you'd like to help, please get in contact with me on the Fediverse.
+Secure fetch (aka authorised fetches, authenticated fetches, secure mode...) is *not* supported by mstdn-ebooks, and will fail to download any posts from users on instances with secure fetch enabled. For more information, see [this wiki page](https://github.com/Lynnesbian/mstdn-ebooks/wiki/Secure-fetch).
 
 ## Install/usage Guide
 An installation and usage guide is available [here](https://cloud.lynnesbian.space/s/jozbRi69t4TpD95). It's primarily targeted at Linux, but it should be possible on BSD, macOS, etc. I've also put some effort into providing steps for Windows, but I can't make any guarantees as to its effectiveness.
@@ -54,7 +43,7 @@ While there is a Docker version provided, it is **not guaranteed to work**. I pe
 
 mstdn-ebooks uses ActivityPub to download posts. This means that it is not dependant on any particular server software, and should work with anything that (properly) implements ActivityPub. Any software that does not support ActivityPub (e.g. diaspora*) is not supported, and won't work.
 
-I recommend that you create your bot's account on a Mastodon instance. Creating a bot on a Pleroma instance means that your bot will be unable to reply. However, even if your bot is on a Mastodon instance, it will be able to learn from any Pleroma or Misskey users just fine.
+I recommend that you create your bot's account on a Mastodon instance. Creating a bot on a Pleroma instance means that your bot will be unable to reply, although posting will work just fine. However, even if your bot is on a Mastodon instance, it will be able to learn from any Pleroma or Misskey users just fine.
 
 ## Configuration
 Configuring mstdn-ebooks is accomplished by editing `config.json`. If you want to use a different file for configuration, specify it with the `--cfg` argument. For example, if you want to use `/home/lynne/c.json` instead, you would run `python3 main.py --cfg /home/lynne/c.json` instead of just `python3 main.py`
