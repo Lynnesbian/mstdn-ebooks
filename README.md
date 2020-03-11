@@ -24,6 +24,9 @@ Like mstdn-ebooks, FediBooks is free, both as in free of charge and free to modi
 ## Install/usage guide
 An installation and usage guide is available [here](https://cloud.lynnesbian.space/s/jozbRi69t4TpD95). It's primarily targeted at Linux, but it should be possible on BSD, macOS, etc. I've also put some effort into providing steps for Windows, but I can't make any guarantees as to its effectiveness.
 
+### Docker
+While there is a Docker version provided, it is **not guaranteed to work**. I personally don't use Docker and don't know how the Dockerfile works; it was create over a year ago by someone else and hasn't been updated since. It might work for you, it might not.
+
 ## Compatibility
 | Software  | Downloading statuses                                              | Posting | Replying                                                    |
 |-----------|-------------------------------------------------------------------|---------|-------------------------------------------------------------|
