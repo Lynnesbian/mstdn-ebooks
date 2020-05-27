@@ -24,11 +24,11 @@ def make_sentence(output, cfg):
 	if len(toots) == 0:
 		output.send("Database is empty! Try running main.py.")
 		return
-	
+
 	model = nlt_fixed(
 		"\n".join([toot[0] for toot in toots])
 	)
-	
+
 	db.close()
 	os.remove("toots-copy.db")
 
@@ -65,25 +65,24 @@ def make_toot(cfg):
 	return toot
 
 def extract_toot(toot):
-	toot = html.unescape(toot) #convert HTML escape codes to text
+	toot = html.unescape(toot) # convert HTML escape codes to text
 	soup = BeautifulSoup(toot, "html.parser")
-	for lb in soup.select("br"): #replace <br> with linebreak
-		lb.insert_after("\n")
-		lb.decompose()
+	for lb in soup.select("br"): # replace <br> with linebreak
+		lb.replace_with("\n")
 
-	for p in soup.select("p"): #ditto for <p>
-		p.insert_after("\n")
-		p.unwrap()
+	for p in soup.select("p"): # ditto for <p>
+		p.replace_with("\n")
 
-	for ht in soup.select("a.hashtag"): #make hashtags no longer links, just text
+	for ht in soup.select("a.hashtag"): # convert hashtags from links to text
 		ht.unwrap()
 
-	for link in soup.select("a"): #convert <a href='https://example.com>example.com</a> to just https://example.com
-		link.insert_after(link["href"])
-		link.decompose()
+	for link in soup.select("a"): #ocnvert <a href='https://example.com>example.com</a> to just https://example.com
+		if 'href' in link:
+			# apparently not all a tags have a href, which is understandable if you're doing normal web stuff, but on a social media platform??
+			link.replace_with(link["href"])
 
 	text = soup.get_text()
-	text = re.sub("https://([^/]+)/(@[^ ]+)", r"\2@\1", text) #put mastodon-style mentions back in
-	text = re.sub("https://([^/]+)/users/([^ ]+)", r"@\2@\1", text) #put pleroma-style mentions back in
-	text = text.rstrip("\n") #remove trailing newline
+	text = re.sub(r"https://([^/]+)/(@[^\s]+)", r"\2@\1", text) # put mastodon-style mentions back in
+	text = re.sub(r"https://([^/]+)/users/([^\s/]+)", r"@\2@\1", text) # put pleroma-style mentions back in
+	text = text.rstrip("\n") # remove trailing newline(s)
 	return text
