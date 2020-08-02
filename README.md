@@ -59,8 +59,7 @@ Configuring mstdn-ebooks is accomplished by editing `config.json`. If you want t
 | strip_paired_punctuation | false | If true, mstdn-ebooks will remove punctuation that commonly appears in pairs, like " and (). This avoids the issue of posts that open a bracket (or quote) without closing it. |
 
 ## Donating
-While mstdn-ebooks is currently feature complete, I still maintain it and fix critical issues. I also work on software other than mstdn-ebooks, and provide a few free services (OCRbot, FediBooks...) for people to use. If you'd like to help cover the costs of these projects, please consider donating.
+Please don't feel obligated to donate at all.
 
-- [Patreon](https://www.patreon.com/lynnesbian) allows you to "pledge" an amount and have it paid automatically, similar to a recurring subscription. Note that Patreon does not allow you to donate only a single time.
 - [Ko-Fi](https://ko-fi.com/lynnesbian) allows you to make one-off payments in increments of AU$3. These payments are not taxed.
 - [PayPal](https://paypal.me/lynnesbian) allows you to make one-off payments of any amount in a range of currencies. These payments may be taxed.
