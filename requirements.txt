@@ -1,4 +1,4 @@
 Mastodon.py==1.5.1
 markovify==0.8.0
-beautifulsoup4==4.8.2
+beautifulsoup4==4.9.1
 requests==2.24.0
