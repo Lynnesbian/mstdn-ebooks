@@ -87,6 +87,7 @@ db = sqlite3.connect("toots.db")
 db.text_factory=str
 c = db.cursor()
 c.execute("CREATE TABLE IF NOT EXISTS `toots` (sortid INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT, id VARCHAR NOT NULL, cw INT NOT NULL DEFAULT 0, userid VARCHAR NOT NULL, uri VARCHAR NOT NULL, content VARCHAR NOT NULL)")
+c.execute("CREATE TRIGGER IF NOT EXISTS `dedup` AFTER INSERT ON toots FOR EACH ROW BEGIN DELETE FROM toots WHERE rowid NOT IN (SELECT MIN(sortid) FROM toots GROUP BY uri ); END; ")
 db.commit()
 
 tableinfo = c.execute("PRAGMA table_info(`toots`)").fetchall()
@@ -121,6 +122,7 @@ if not found:
 
 	c.execute("DROP TABLE `toots`")
 	c.execute("ALTER TABLE `toots_temp` RENAME TO `toots`")
+	c.execute("CREATE TRIGGER IF NOT EXISTS `dedup` AFTER INSERT ON toots FOR EACH ROW BEGIN DELETE FROM toots WHERE rowid NOT IN (SELECT MIN(sortid) FROM toots GROUP BY uri ); END; ")
 
 db.commit()
 
