@@ -27,7 +27,12 @@ cfg = {
 	"learn_from_cw": False,
 	"mention_handling": 1,
 	"max_thread_length": 15,
-	"strip_paired_punctuation": False
+	"strip_paired_punctuation": False,
+	"limit_length": False,
+	"length_lower_limit": 5,
+	"length_upper_limit": 50,
+	"overlap_ratio_enabled": False,
+	"overlap_ratio": 0.7
 }
 
 try:

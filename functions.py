@@ -5,6 +5,7 @@
 
 import markovify
 from bs4 import BeautifulSoup
+from random import randint
 import re, multiprocessing, sqlite3, shutil, os, html
 
 def make_sentence(output, cfg):
@@ -25,7 +26,9 @@ def make_sentence(output, cfg):
 		output.send("Database is empty! Try running main.py.")
 		return
 
-	model = nlt_fixed(
+	nlt = markovify.NewlineText if cfg['overlap_ratio_enabled'] else nlt_fixed
+
+	model = nlt(
 		"\n".join([toot[0] for toot in toots])
 	)
 
@@ -34,10 +37,18 @@ def make_sentence(output, cfg):
 
 	toots_str = None
 
+	if cfg['limit_length']:
+		sentence_len = randint(cfg['length_lower_limit'], cfg['length_upper_limit'])
+
 	sentence = None
 	tries = 0
 	while sentence is None and tries < 10:
-		sentence = model.make_short_sentence(500, tries=10000)
+		sentence = model.make_short_sentence(
+			max_chars=500,
+			tries=10000,
+			max_overlap_ratio=cfg['overlap_ratio'] if cfg['overlap_ratio_enabled'] else 0.7,
+			max_words=sentence_len if cfg['limit_length'] else None
+			)
 		tries = tries + 1
 
 	# optionally remove mentions
